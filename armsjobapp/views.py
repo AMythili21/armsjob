@@ -10,7 +10,8 @@ from django.utils.timezone import now
 from .models import Candidate
 from .serializers import CandidateSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
-
+from .serializers import CandidateNameSerializer
+from rest_framework.pagination import PageNumberPagination
 
 
 
@@ -174,6 +175,20 @@ class CandidateUpdateView(generics.UpdateAPIView):
     serializer_class = CandidateSerializer
     lookup_field = 'candidate_id'
 
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)  # for PATCH support
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response({
+            "status": "success",
+            "message": "Candidate updated successfully",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+
+
 
 class CandidateDeleteView(generics.DestroyAPIView):
     queryset = Candidate.objects.all()
@@ -187,4 +202,52 @@ class CandidateDeleteView(generics.DestroyAPIView):
         return Response({
             "status": "success",
             "message": "Candidate deleted successfully"
+        }, status=status.HTTP_200_OK)
+    
+class CandidatePagination(PageNumberPagination):
+    page_size = 10  # Number of candidates per page
+    page_size_query_param = 'page_size'  # Optional: allows frontend to set size
+    max_page_size = 100  # Optional: max limit
+
+class CandidateNameListView(generics.ListAPIView):
+    queryset = Candidate.objects.all().order_by('candidate_id')
+    serializer_class = CandidateNameSerializer
+    pagination_class = CandidatePagination  # Optional if you want pagination
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            paginated_response = self.get_paginated_response(serializer.data)
+            return Response({
+                "status": "success",
+                "message": "Candidate name list fetched successfully",
+                "data": paginated_response.data.get('results', []),
+                "count": paginated_response.data.get('count', 0),
+                "next": paginated_response.data.get('next', None),
+                "previous": paginated_response.data.get('previous', None)
+            }, status=status.HTTP_200_OK)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "status": "success",
+            "message": "Candidate name list fetched successfully",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+
+
+class CandidateDetailView(generics.RetrieveAPIView):
+    queryset = Candidate.objects.all()
+    serializer_class = CandidateSerializer
+    lookup_field = 'candidate_id'
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()  # Get the candidate object
+        serializer = self.get_serializer(instance)  # Serialize the object
+        return Response({
+            "status": "success",
+            "message": "Candidate details fetched successfully",
+            "data": serializer.data
         }, status=status.HTTP_200_OK)

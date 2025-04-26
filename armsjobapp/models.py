@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import JSONField  # Django 3.1+ supports JSONField directly
+
 
 # Create your models here.
 class AgentSupplier(models.Model):
@@ -35,31 +37,16 @@ class Candidate(models.Model):
     nationality = models.CharField(max_length=255)
     current_location = models.CharField(max_length=255)
 
-    visa_type = models.CharField(max_length=50, choices=[
-        ('UAE Employment', 'UAE Employment'),
-        ('Visit', 'Visit'),
-        ('Cancelled', 'Cancelled'),
-        ('Freelance', 'Freelance'),
-        ('Dependent', 'Dependent')
-    ])
+    visa_type = models.CharField(max_length=255)
     visa_expiry_date = models.DateField(null=True, blank=True)
-    availability_to_join = models.CharField(max_length=20, choices=[
-        ('Immediate', 'Immediate'),
-        ('1 Week', '1 Week'),
-        ('2 Weeks', '2 Weeks'),
-        ('1 Month', '1 Month')
-    ])
+    availability_to_join = models.CharField(max_length=255)
 
     position_applying_for = models.CharField(max_length=100)
     category = models.CharField(max_length=255)
     other_category = models.CharField(max_length=255, null=True, blank=True)
     uae_experience_years = models.CharField(max_length=255)
     skills_tasks = models.TextField()
-    preferred_work_location = models.CharField(max_length=255, choices=[
-        ('Dubai', 'Dubai'),
-        ('Abu Dhabi', 'Abu Dhabi'),
-        ('Open to All UAE', 'Open to All UAE')
-    ])
+    preferred_work_location = models.CharField(max_length=255)
     expected_salary = models.CharField(max_length=255)
 
     upload_cv = models.FileField(upload_to='candidates/cv/')
