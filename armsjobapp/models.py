@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import JSONField  # Django 3.1+ supports JSONField directly
+from django.core.exceptions import ValidationError
 
 
 # Create your models here.
@@ -28,6 +28,12 @@ class AgentSupplier(models.Model):
         db_table = 'agent_supplier'
 
 #candidate
+def validate_file_size(value):
+    filesize = value.size
+    if filesize > 512000:  # 500 KB = 500 * 1024 = 512000 bytes
+        raise ValidationError("Max file size 500KB")
+    return value
+
 class Candidate(models.Model):
     candidate_id = models.AutoField(primary_key=True)
     full_name = models.CharField(max_length=255)
@@ -49,9 +55,11 @@ class Candidate(models.Model):
     preferred_work_location = models.CharField(max_length=255)
     expected_salary = models.CharField(max_length=255)
 
-    upload_cv = models.FileField(upload_to='candidates/cv/')
-    photo_upload = models.ImageField(upload_to='candidates/photos/', null=True, blank=True)
-    relevant_docs = models.FileField(upload_to='candidates/docs/')
+    upload_cv = models.FileField(upload_to='candidates/cv/', validators=[validate_file_size])
+    photo_upload = models.ImageField(upload_to='candidates/photos/', null=True, blank=True, validators=[validate_file_size])
+    relevant_docs1 = models.FileField(upload_to='candidates/docs/', validators=[validate_file_size])
+    relevant_docs2 = models.FileField(upload_to='candidates/docs/', null=True, blank=True, validators=[validate_file_size])
+    relevant_docs3 = models.FileField(upload_to='candidates/docs/', null=True, blank=True, validators=[validate_file_size])
 
     status = models.CharField(max_length=20, default='Active')
     is_deleted = models.BooleanField(default=False)
@@ -59,3 +67,19 @@ class Candidate(models.Model):
 
     class Meta:
         db_table = 'candidate'
+
+#Remarks
+
+class CandidateRemarks(models.Model):
+    id = models.AutoField(primary_key=True)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='remarks')
+    remark = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'candidate_remarks'
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        return f'Remark for {self.candidate.full_name}'

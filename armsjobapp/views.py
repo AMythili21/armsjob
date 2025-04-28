@@ -12,6 +12,8 @@ from .serializers import CandidateSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import CandidateNameSerializer
 from rest_framework.pagination import PageNumberPagination
+from .models import CandidateRemarks
+from .serializers import CandidateRemarksSerializer
 
 
 
@@ -251,3 +253,10 @@ class CandidateDetailView(generics.RetrieveAPIView):
             "message": "Candidate details fetched successfully",
             "data": serializer.data
         }, status=status.HTTP_200_OK)
+
+#CandidateRemarks
+    
+class CandidateRemarksCreateView(generics.CreateAPIView):
+    queryset = CandidateRemarks.objects.all()
+    serializer_class = CandidateRemarksSerializer
+

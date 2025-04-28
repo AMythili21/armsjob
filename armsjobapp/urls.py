@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import AgentSupplierListCreateView,AgentSupplierUpdateView,AgentSupplierDeleteView
-from .views import CandidateListCreateView, CandidateUpdateView, CandidateDeleteView,CandidateNameListView,CandidateDetailView
+from .views import CandidateListCreateView, CandidateUpdateView, CandidateDeleteView,CandidateNameListView,CandidateDetailView,CandidateRemarksCreateView
+
+
 
 
 urlpatterns = [
@@ -11,7 +13,7 @@ urlpatterns = [
     path('candidates/update/<int:candidate_id>/', CandidateUpdateView.as_view(), name='candidate-update'),
     path('candidates/delete/<int:candidate_id>/', CandidateDeleteView.as_view(), name='candidate-delete'),
     path('candidates/names/', CandidateNameListView.as_view(), name='candidate-name-list'),
-     path('candidates/<int:candidate_id>/', CandidateDetailView.as_view(), name='candidate-detail'),
-
+    path('candidates/<int:candidate_id>/', CandidateDetailView.as_view(), name='candidate-detail'),
+    path('remarks/create/', CandidateRemarksCreateView.as_view(), name='candidate-remark-create'),
 
 ]
