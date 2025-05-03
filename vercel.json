@@ -1,0 +1,8 @@
+{
+  "builds": [
+    { "src": "armsjob/wsgi.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "armsjob/wsgi.py" }
+  ]
+}
