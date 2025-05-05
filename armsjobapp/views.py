@@ -91,16 +91,16 @@ class AgentSupplierListCreateView(generics.ListCreateAPIView):
     
 class AgentSupplierUpdateView(APIView):
     def post(self, request, *args, **kwargs):
-        agent_supplier_id = request.data.get('agent_supplier_id')
+        id = request.data.get('id')
 
         if not agent_supplier_id:
             return Response({
                 "status": "error",
-                "message": "agent_supplier_id is required"
+                "message": "id is required"
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            instance = AgentSupplier.objects.get(agent_supplier_id=agent_supplier_id)
+            instance = AgentSupplier.objects.get(id=id)
         except AgentSupplier.DoesNotExist:
             return Response({
                 "status": "error",
@@ -125,16 +125,16 @@ class AgentSupplierUpdateView(APIView):
 
 class AgentSupplierDeleteView(APIView):
     def post(self, request, *args, **kwargs):
-        agent_supplier_id = request.data.get('agent_supplier_id')
+        id = request.data.get('id')
 
         if not agent_supplier_id:
             return Response({
                 "status": "error",
-                "message": "agent_supplier_id is required"
+                "message": "id is required"
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            instance = AgentSupplier.objects.get(agent_supplier_id=agent_supplier_id)
+            instance = AgentSupplier.objects.get(id=id)
         except AgentSupplier.DoesNotExist:
             return Response({
                 "status": "error",
@@ -175,7 +175,7 @@ class CandidateListCreateView(generics.ListCreateAPIView):
 class CandidateUpdateView(generics.UpdateAPIView):
     queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
-    lookup_field = 'candidate_id'
+    lookup_field = 'id'
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)  # for PATCH support
@@ -195,7 +195,7 @@ class CandidateUpdateView(generics.UpdateAPIView):
 class CandidateDeleteView(generics.DestroyAPIView):
     queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
-    lookup_field = 'candidate_id'
+    lookup_field = 'id'
 
     def destroy(self, request, *args, **kwargs):
         candidate = self.get_object()
@@ -243,7 +243,7 @@ class CandidateNameListView(generics.ListAPIView):
 class CandidateDetailView(generics.RetrieveAPIView):
     queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
-    lookup_field = 'candidate_id'
+    lookup_field = 'id'
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()  # Get the candidate object
