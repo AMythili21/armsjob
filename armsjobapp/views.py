@@ -127,7 +127,7 @@ class AgentSupplierDeleteView(APIView):
     def post(self, request, *args, **kwargs):
         id = request.data.get('id')
 
-        if not agent_supplier_id:
+        if not id:
             return Response({
                 "status": "error",
                 "message": "id is required"
