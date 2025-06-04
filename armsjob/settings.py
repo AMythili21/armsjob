@@ -1,3 +1,6 @@
+from pathlib import Path
+import os
+
 """
 Django settings for armsjob project.
 
@@ -10,10 +13,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+BASE_URL = 'https://armsjob.vercel.app/'
 
 
 # Quick-start development settings - unsuitable for production
@@ -23,9 +29,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-a&o8#4vbczldk+14s@s!gj_wt=j+65_m90tqvof1@!e4)(5oy&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = False
 
-ALLOWED_HOSTS = []
+#SET TRUE FOR MEDIA FILE
+DEBUG=True
+
+ALLOWED_HOSTS = ['*'] 
+
+# ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# ALLOWED_HOSTS = ['192.168.1.10']
+
+# ALLOWED_HOSTS = ['.vercel.app', '.now.sh', '127.0.0.1', 'localhost']
+
+# ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'localhost','192.168.1.11']
 
 
 # Application definition
@@ -38,7 +55,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'armsjobapp'
+    'armsjobapp',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -49,7 +67,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
+
 ]
+
+# STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+if os.getenv("VERCEL"):
+    DEBUG = False
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.SearchFilter'],
@@ -57,7 +85,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-import os
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -107,6 +134,20 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'armsjob',
+#         'USER': 'neondb_owner',
+#         'PASSWORD': 'npg_xRw4meUbvB3K',
+#         'HOST': 'ep-still-bird-a4fq1ufe-pooler.us-east-1.aws.neon.tech',
+#         'PORT': '5432',
+#         'OPTIONS': {
+#             'sslmode': 'require'
+#         }
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -148,3 +189,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_CREDENTIALS = True
+ 
+CORS_ALLOWED_ORIGINS = [
+"http://localhost:5174",
+"http://localhost:5173",
+"http://0.0.0.0:8000",
+"https://arms-jobs-frontend.vercel.app"
+
+]
+ 
